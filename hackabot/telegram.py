@@ -1,5 +1,6 @@
 import collections
 import logging
+import os
 import threading
 from pathlib import Path
 from threading import Lock
@@ -8,6 +9,8 @@ from typing import Any, DefaultDict
 import requests
 import telebot
 import granula
+
+from speech_pack.tinkoff_stt import file_to_text
 from speech_pack.tinkoff_tts import generate
 
 logger = logging.getLogger('telegram')
@@ -61,6 +64,27 @@ def run_bot(token: str):
             #     response = 'Ответа нет'
             #
             # _send(message, response=response)
+
+    @bot.message_handler(func=lambda message: True,
+                         content_types=['voice'])
+    def handel_voice(message: telebot.types.Message):
+        try:
+            file = bot.get_file(message.voice.file_id)
+            voice_message = bot.download_file(file.file_path)
+            voice_file_name = f'voice{message.chat.id}.ogg'
+            with open(
+                    os.path.join(
+                        '..',
+                        'voices',
+                        voice_file_name
+                    )
+                    , 'wb+') as f:
+                f.write(voice_message)
+
+                response = file_to_text(voice_file_name)
+                bot.send_message(message.chat.id, response)
+        except Exception as e:
+            bot.send_message(message.chat.id, 'Не удалось распознать текст (((. У меня ляпки')
 
     @bot.message_handler()
     def send_response(message: telebot.types.Message):  # pylint:disable=unused-variable
