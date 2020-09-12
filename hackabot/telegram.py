@@ -8,6 +8,7 @@ from typing import Any, DefaultDict
 import requests
 import telebot
 import granula
+from text2speech.tinkoff_tts import generate
 
 logger = logging.getLogger('telegram')
 
@@ -28,29 +29,38 @@ def run_bot(token: str):
     def _send(message: telebot.types.Message, response: str):
         bot.send_message(chat_id=message.chat.id, text=response, parse_mode='html')
 
+    def _send_audio(message: telebot.types.Message):
+        generate(message.text, message.chat.id)
+        audio = open(f'synthesised{message.chat.id}.wav', 'rb')
+        # tb.send_audio(chat_id, audio)
+        bot.send_audio(chat_id=message.chat.id, audio=audio)
+
     @bot.message_handler(commands=['start'])
     def _start(message: telebot.types.Message):
         with locks[message.chat.id]:
             _send(message, response='Задавайте ваши вопросы')
 
     def _get_echo_response(text: str, user_id: str) -> str:
-        return f'Ваш идентификатор: {user_id}\nВаше сообщение: {text}'
+        return f'Добрый день, спутник! Не хотите немного кэшбэка?\n' \
+ \
+               f'Ваш идентификатор: {user_id}\nВаше сообщение: {text}'
 
     def _send_response(message: telebot.types.Message):
         chat_id = message.chat.id
         user_id = str(message.from_user.id) if message.from_user else '<unknown>'
 
         with locks[chat_id]:
-            try:
-                response = _get_echo_response(message.text, user_id)
-            except Exception as e:
-                logger.exception(e)
-                response = 'Произошла ошибка'
-
-            if response is None:
-                response = 'Ответа нет'
-
-            _send(message, response=response)
+            _send_audio(message)
+            # try:
+            #     response = _get_echo_response(message.text, user_id)
+            # except Exception as e:
+            #     logger.exception(e)
+            #     response = 'Произошла ошибка'
+            #
+            # if response is None:
+            #     response = 'Ответа нет'
+            #
+            # _send(message, response=response)
 
     @bot.message_handler()
     def send_response(message: telebot.types.Message):  # pylint:disable=unused-variable

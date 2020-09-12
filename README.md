@@ -3,6 +3,7 @@
 2. Install python and venv
 3. Install [poetry](https://python-poetry.org/docs/#installation)
 4. Install dependencies with `poetry install`
+5. Install dependencies with `pip install -r requirements\all.txt`
 
 You're ready to run bot locally.
 
