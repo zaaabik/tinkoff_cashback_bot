@@ -33,7 +33,7 @@ def run_bot(token: str):
         generate(message.text, message.chat.id)
         audio = open(f'synthesised{message.chat.id}.wav', 'rb')
         # tb.send_audio(chat_id, audio)
-        bot.send_audio(chat_id=message.chat.id, audio=audio)
+        bot.send_voice(chat_id=message.chat.id, voice=audio)
 
     @bot.message_handler(commands=['start'])
     def _start(message: telebot.types.Message):
