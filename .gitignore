@@ -2,3 +2,6 @@
 *.egg-info
 .idea/
 /source/*
+/hackabot/synthesised*
+*/__pycache__/*
+*/__pycache__/*
