@@ -3,7 +3,7 @@ import sys
 sys.path.append("..")
 
 from tinkoff.cloud.tts.v1 import tts_pb2_grpc, tts_pb2
-from text2speech.auth import authorization_metadata
+from speech_pack.auth import authorization_metadata
 import grpc
 import os
 import wave

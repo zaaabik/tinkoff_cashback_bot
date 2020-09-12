@@ -8,7 +8,7 @@ from typing import Any, DefaultDict
 import requests
 import telebot
 import granula
-from text2speech.tinkoff_tts import generate
+from speech_pack.tinkoff_tts import generate
 
 logger = logging.getLogger('telegram')
 
