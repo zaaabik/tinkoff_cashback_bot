@@ -1,3 +1,5 @@
+import os
+
 import requests
 import nltk
 from nltk import pos_tag, word_tokenize
@@ -114,39 +116,48 @@ stop_words = [
     'баллы',
     'баллов',
     'баллами',
-    'баллах'    
+    'баллах'
 ]
+
+
 def Help(req, user_id):
-    print('Можете меня спросить о следующих вещах:\n\
+    return ('Можете меня спросить о следующих вещах:\n\
     Покажи мой рейтинг\n\
     Покажи карту\n\
-    Где я могу купить кофе?')
+    Где я могу купить кофе?', 'audio')
+
+
 def Rate(req, user_id):
-    print('На данный момент вы 1356, ваш средний процент кэшбека 1.5 и множитель от покупок с друзьями 1.0.')
+    return 'На данный момент вы 1356, ваш средний процент кэшбека 1.5 и множитель от покупок с друзьями 1.0.', 'text'
+
+
 def Map(req, user_id):
-    print('Тут отправляем картиночку after.jpg')
+    img_path = os.path.join('..', 'images', 'after.jpg')
+    return img_path, 'image'
+
+
 def Near(req, user_id):
     req = ' '.join(req)
     req = pos_tag(word_tokenize(req), lang='rus')
-    req = ' '.join([i[0] for i in req if i[1]=='S' and i[0] not in stop_words])
+    req = ' '.join([i[0] for i in req if i[1] == 'S' and i[0] not in stop_words])
     try:
         with open('users.json', 'r') as f:
             tmp = json.load(f)
     except:
         tmp = {}
-    tmp[user_id] = {'request':req}
+    tmp[str(user_id)]['request'] = req
     with open('users.json', 'w') as f:
         json.dump(tmp, f)
-    print('Запрос на отправку:',req)
+    print('Запрос на отправку:', req)
+    return 'Поделись своим местоположением', 'audio'
 
-    
+
 funcs = {
     'рейтинг': Rate,
     'карта': Map,
     'поблизости': Near,
     'карту': Map,
     'карте': Map,
-    'карты': Map,
     'карт': Map,
     'картой': Map,
     'карты': Map,
@@ -173,6 +184,8 @@ funcs = {
     'помоги': Help,
     'умеешь': Help
 }
+
+
 def parse(req, user_id):
     req = ''.join(x for x in req if x.isalpha() or x == ' ')
     req = req.lower().split()
@@ -184,19 +197,15 @@ def parse(req, user_id):
                 tmp = Near
                 continue
             else:
-                funcs[i](req, user_id)
-                skip = True
-                break
+                return funcs[i](req, user_id)
         if tmp:
-            tmp(req, user_id)
-            skip = True
-    if not skip:
-        print('Я вас не понял')
-def main():
+            return tmp(req, user_id)
+
+    return 'Я тебя не понял', 'audio'
+
+
+if __name__ == 'main':
     while True:
         print("Чем я могу вам помочь?")
         req = input()
         parse(req, '0001')
-                
-
-main()
