@@ -66,26 +66,22 @@ def run_bot(token: str):
     @bot.message_handler(commands=['start'])
     def _start(message: telebot.types.Message):
         with locks[message.chat.id]:
-            _send(message, response='Открывай новые локации, \
-             лови кешбек, поднимайся в рейтинге. Трать с умом и получай еще больше!')
+            _send_audio(message, response='Открывай новые локации, лови кешбек, поднимайся в рейтинге. Трать с умом и получай еще больше!')
             time.sleep(1)
-            _send(message, response='Сейчас расскажу правила и проведу через короткое обучение. \
-                 В Игру, наш финансово грамотный друг, в игру!')
+            _send_audio(message, response='Сейчас расскажу правила и проведу через короткое обучение. \nВ Игру, наш финансово грамотный друг, в игру!')
             time.sleep(1)
-            _send(message, response='Суть проста: набираешь как можно больше кэшбэка \
-                 за время акции (я помогу тебе в этом!) - получаешь повышенный кешбэк НА ВСЕ в течение 3х месяцев. И это еще не все! Получай скидки от партнеров за ачивки в игре.')
+            _send_audio(message, response='Суть проста: набираешь как можно больше кэшбэка за время акции (я помогу тебе в этом!) - получаешь повышенный кешбэк НА ВСЕ в течение 3х месяцев. И это еще не все! Получай скидки от партнеров за ачивки в игре.')
             time.sleep(1)
-            _send(message, response='Что за ачивки? Получай их за открытие новых локаций! \
-                Пока открыто очень мало, смотри:')
+            _send_audio(message, response='Что за ачивки? Получай их за открытие новых локаций! \nПока открыто очень мало, смотри:')
             f = open("before.jpg", 'rb')
             _send_photo(message,f)#отправить картонку до
-            _send(message, response='A теперь спроси меня, где кофейня с лучшим кешбэком рядом с тобой? Можно и нужно голосом!')
+            _send_audio(message, response='A теперь спроси меня, где кофейня с лучшим кешбэком рядом с тобой? Можно и нужно голосом!')
         try:
             with open('users.json', 'r') as f:
                 tmp = json.load(f)
         except:
             tmp = {}
-        tmp[message.chat.id] = {'current_state': 0}
+        tmp[str(message.chat.id)] = {'current_state': 0}
         with open('users.json', 'w') as f:
             json.dump(tmp, f)
         
@@ -100,7 +96,7 @@ def run_bot(token: str):
         with open('users.json', 'r') as f:
             tmp = json.load(f)
 
-        places_query = tmp[message.chat.id]['request']
+        places_query = tmp[str(message.chat.id)]['request']
         headers = {'Content-Type': 'application/json'}
         params = {
         "geo_query": {
