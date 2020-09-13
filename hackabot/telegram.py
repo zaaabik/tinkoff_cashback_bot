@@ -59,7 +59,10 @@ def run_bot(token: str):
         audio = open(f'synthesised{message.chat.id}.wav', 'rb')
         # tb.send_audio(chat_id, audio)
         bot.send_voice(chat_id=message.chat.id, voice=audio)
-
+    
+    def _send_photo(message: telebot.types.Message, photo):
+        bot.send_photo(chart_id = message.chart.id, photo = photo)
+        
     @bot.message_handler(commands=['start'])
     def _start(message: telebot.types.Message):
         with locks[message.chat.id]:
@@ -74,7 +77,8 @@ def run_bot(token: str):
             time.sleep(1)
             _send(message, response='Что за ачивки? Получай их за открытие новых локаций! \
                 Пока открыто очень мало, смотри:')
-            #отправить картонку до
+            f = open("before.jpg", 'rb')
+            _send_photo(message,f)#отправить картонку до
             _send(message, response='A теперь спроси меня, где кофейня с лучшим кешбэком рядом с тобой? Можно и нужно голосом!')
         try:
             with open('users.json', 'r') as f:
@@ -93,6 +97,10 @@ def run_bot(token: str):
         coor0 = (latitude + sq_size / 2, longitude + sq_size / 2)
         coor1 = (latitude - sq_size / 2, longitude - sq_size / 2)
 
+        with open('users.json', 'r') as f:
+            tmp = json.load(f)
+
+        places_query = tmp[message.chat.id]['request']
         headers = {'Content-Type': 'application/json'}
         params = {
         "geo_query": {
@@ -172,7 +180,7 @@ def run_bot(token: str):
                     if tmp[message.chat.id]['current_state'] == 0 or tmp[message.chat.id]['current_state'] == 1:
                         training_parse(message, tmp[message.chat.id]['current_state'], response)
                     else:
-                        parse(user_id=message.chat.id)
+                        parse(req=response, user_id=message.chat.id)
 
         except Exception as e:
             bot.send_message(message.chat.id, 'Не удалось распознать текст (((. У меня ляпки')
