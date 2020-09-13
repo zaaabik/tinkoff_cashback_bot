@@ -9,3 +9,5 @@
 **/__pycache__/tts_pb2.cpython-38.pyc
 **/__pycache__/**
 **/voices/**
+/hackabot/users.json
+**/users.json

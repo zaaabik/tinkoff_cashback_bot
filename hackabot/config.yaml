@@ -1,2 +1,2 @@
 telegram:
-  key: !BOT_KEY_PUT_HERE!
+  key: 'api_key'
