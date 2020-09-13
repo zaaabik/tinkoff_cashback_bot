@@ -8,8 +8,8 @@ import os
 import wave
 
 endpoint = os.environ.get("VOICEKIT_ENDPOINT") or "tts.tinkoff.ru:443"
-api_key = 'ZXZ4ZmZxbXhjZndkZXN4YnB4c3B1dnFrbWRla2ZxZWw=s.chekulaevatinkoff'  # os.environ["VOICEKIT_API_KEY"]
-secret_key = 'YmNobHphZWZrb3dybHF1YnhxZmR5emtoZXZ3ZmlxcXI='  # os.environ["VOICEKIT_SECRET_KEY"]
+api_key = os.environ["VOICEKIT_API_KEY"]
+secret_key = os.environ["VOICEKIT_SECRET_KEY"]
 
 sample_rate = 48000
 
